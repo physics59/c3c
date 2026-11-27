@@ -1375,6 +1375,12 @@ fn void* __memcpy(void* dst, void* src, sz n) @weak @export("memcpy")
 }
 
 
+module std::core::mem @feat(WASM);
+
+const sz WASM_BLOCK_SIZE = 65536;
+extern const void* WASM_HEAP_BASE @cname("__heap_base");
+
+
 <*
  A `Volatile` wraps a value of `Type` so every access to it goes through a volatile
  load/store, preventing the compiler from optimizing accesses away.
