@@ -29,24 +29,24 @@ fn void*? WasmArena.acquire(&self, sz size, AllocInitType init_type = ZERO, sz a
 		sz blocks_required = (sz)((byte_sum - allocated_bytes) / mem::WASM_BLOCK_SIZE);
 		@wasm_memory_grow(blocks_required, WASM_MEMORY)!;
 	}
-	if(init_type == ZERO) 
+	if(init_type == ZERO)
 	{
 		mem::set((void*)byte_sum, 0, (usz)bytes);
 	}
 	defer self.top = byte_sum;
 	return self.top + extra_alignment;
 }
-fn void*? WasmArena.resize(&self, void* ptr, sz new_size, sz alignment = 0) @dynamic 
+fn void*? WasmArena.resize(&self, void* ptr, sz new_size, sz alignment = 0) @dynamic
 {
 	self.acquire(new_size, ZERO, alignment);
 }
 <* Rewinds the top of the WasmArena to the given marker *>
-fn void WasmArena.release(&self, void* marker, bool aligned = false) @dynamic 
+fn void WasmArena.release(&self, void* marker, bool aligned = false) @dynamic
 {
 	self.top = marker;
 }
 <* Sets the start of the WasmArena to the given start pointer *>
-fn void WasmArena.init(&self, void* start) 
+fn void WasmArena.init(&self, void* start)
 {
 	self.top = start;
 }
