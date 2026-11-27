@@ -48,8 +48,8 @@ fn sz os_pagesize()
 		$case env::WIN32:
 			static sz pagesize;
 			if (pagesize) return pagesize;
-		    Win32_SYSTEM_INFO info;
-            win32::getSystemInfo(&info);
+			Win32_SYSTEM_INFO info;
+			win32::getSystemInfo(&info);
 			return pagesize = info.dwPageSize;
 		$default:
 			return 4096;
