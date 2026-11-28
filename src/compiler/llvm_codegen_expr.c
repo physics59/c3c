@@ -1575,6 +1575,7 @@ static void llvm_emit_const_init_ref(GenContext *c, BEValue *ref, ConstInitializ
 			Decl *decl = const_init->type->decl;
 			ArrayIndex index = const_init->init_union.index;
 			Type *type = decl->strukt.members[index]->type->canonical;
+			if (type_size(type) < type_size(const_init->type)) llvm_store_zero(c, ref);
 			// Bitcast.
 			BEValue value = *ref;
 			llvm_value_bitcast(c, &value, type);
