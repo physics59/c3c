@@ -375,7 +375,7 @@ LLVMValueRef llvm_emit_const_initializer(GenContext *c, ConstInitializer *const_
 			// Add possible padding as and i8 array.
 			if (union_size > member_size)
 			{
-				values[1] = llvm_emit_const_padding(c, union_size - member_size);
+				values[1] = LLVMConstNull(llvm_const_padding_type(c, union_size - member_size));
 				value_count = 2;
 			}
 

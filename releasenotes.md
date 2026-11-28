@@ -141,6 +141,8 @@
 - Windows `process::spawn` mangled empty arguments, arguments with quotes and trailing backslashes. #3687
 - Fix nolibc::ldexp results for subnormals and large exponents.
 - nolibc fixup: `tan`/`tanf` read the reduced argument before it was computed; `sinf`/`cosf`/`tanf`/`sincosf` returned garbage for arguments below -9π/4, `sincos`/`sincosf` were stubs. `exp`, `expf`, `log`, `logf`, `pow`, `powf`, `erf`, `lgamma` and `tgamma` are now ports of musl. `erff`, `lgammaf`, `tgammaf`, `lgamma_r` and `lgammaf_r` were added to nolibc. `frexp`/`frexpf`/`ldexp`/`ldexpf` are no longer stripped when unused.
+- Constant folding of structs/unions would break in some cases with anonymous members.
+- The bytes after the active member of a constant union are now zero, as in C.
 
 ### Stdlib changes
 - `atomic::fetch_add` and the other `fetch_*` macros now require the alignment to be at most `mem::MAX_MEMORY_ALIGNMENT`; `fetch_max` and `fetch_min` check it at all.

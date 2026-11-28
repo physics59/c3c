@@ -6731,19 +6731,35 @@ static inline bool sema_expr_fold_to_index(Expr *expr, Expr *parent, SubscriptIn
 
 static inline ConstInitializer *sema_expr_fold_to_struct_member(ConstInitializer *init, Type *parent_type, Decl *member)
 {
-
 	Decl *struct_union_decl = type_flatten(parent_type)->decl;
 	switch (init->kind)
 	{
 		case CONST_INIT_UNION:
-			if (struct_union_decl->strukt.members[init->init_union.index] != member) return NULL;
+			if (struct_union_decl->strukt.members[init->init_union.index] != member)
+			{
+				return NULL;
+			}
 			return init->init_union.element;
 		case CONST_INIT_ZERO:
 		{
-			ConstInitializer *result = CALLOCS(ConstInitializer);
-			result->kind = CONST_INIT_ZERO;
-			result->type = member->type;
-			return result;
+			FOREACH(Decl *, m, struct_union_decl->strukt.members)
+			{
+				if (m == member)
+				{
+					ConstInitializer *result = CALLOCS(ConstInitializer);
+					result->kind = CONST_INIT_ZERO;
+					result->type = member->type;
+					return result;
+				}
+				if (!m->name)
+				{
+					ConstInitializer temp = { .kind = CONST_INIT_ZERO, m->type };
+					ConstInitializer *res = sema_expr_fold_to_struct_member(&temp, m->type, member);
+					ASSERT(res != &temp);
+					if (res) return res;
+				}
+			}
+			return NULL;
 		}
 		case CONST_INIT_STRUCT:
 			break;
@@ -6773,24 +6789,14 @@ static inline bool sema_expr_fold_to_member(Expr *expr, Expr *parent, Decl *memb
 {
 	ConstInitializer *init = parent->const_expr.initializer;
 	ConstInitializer *result;
-	switch (init->kind)
+	if (init->kind == CONST_INIT_ZERO)
 	{
-		case CONST_INIT_ZERO:
-			result = init;
-			goto EVAL;
-		case CONST_INIT_STRUCT:
-		case CONST_INIT_UNION:
-			result = sema_expr_fold_to_struct_member(init, parent->type, member);
-			if (!result) return false;
-			goto EVAL;
-		case CONST_INIT_VALUE:
-		case CONST_INIT_ARRAY:
-		case CONST_INIT_ARRAY_FULL:
-		case CONST_INIT_ARRAY_VALUE:
-			UNREACHABLE
+		if (member->type->type_kind == TYPE_FLEXIBLE_ARRAY) return false;
+		expr_rewrite_to_const_zero(expr, member->type);
+		return true;
 	}
-	UNREACHABLE
-EVAL:
+	result = sema_expr_fold_to_struct_member(init, parent->type, member);
+	if (!result) return false;
 	switch (result->kind)
 	{
 		case CONST_INIT_ZERO:
