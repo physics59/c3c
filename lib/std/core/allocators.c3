@@ -12,6 +12,7 @@ module std::core::mem::allocators;
 // TempAllocator              Yes           No            Yes        No*      No*  *Note: Mark/reset using @pool
 // TrackingAllocator           No           No            N/A        No       No   *Note: Wraps other heap allocator
 // Vmem                       Yes           No             No       Yes      Yes   *Note: Can be set to huge sizes
+// WasmArena                  Yes           No             No        No*      No*  *Note: Mark/reset using @wasm_pool. Only for use in WebAssembly targets.
 
 // Heap allocator global data
 

@@ -3,15 +3,15 @@ module std::core::mem::allocators;
 
 const sz WASM_BLOCK_SIZE = 65536;
 
-WasmMemory wasm_memory;
+WasmMemory wasm_memory @deprecated("Use wasm_mem instead");
 
-struct WasmMemory
+struct WasmMemory @deprecated("Use WasmArena instead")
 {
 	sz allocation;
 	sz use;
 }
 
-fn char[]? WasmMemory.allocate_block(&self, sz bytes)
+fn char[]? WasmMemory.allocate_block(&self, sz bytes) @deprecated("Use WasmArena.acquire instead")
 {
 	if (!self.allocation)
 	{

@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT license
 // a copy of which can be found in the LICENSE_STDLIB file.
 module std::core::builtin;
-import libc, std::hash, std::io, std::os::backtrace;
+import libc, std::hash, std::io, std::os::backtrace, std::core::mem;
 
 <*
  Returns a random value at compile time.
@@ -924,13 +924,33 @@ macro String fault.@short_name($self) @const
 	return $name[@str_find($name, "::") + 2..];
 }
 
+<*
+ @param $memory_index : "The index of the WebAssembly memory to read the size of"
+*>
+macro uptr @wasm_memory_pages(uptr $memory_index = 0) @feat(WASM)
+{
+	return $$wasm_memory_size($memory_index);
+}
+
+<*
+ @param $memory_index : "The index of the WebAssembly memory to change the size of"
+
+ @return "The size of memory in pages before growing it"
+ @return? mem::OUT_OF_MEMORY
+*>
+macro iptr? @wasm_memory_grow(iptr pages, uptr $memory_index = 0) @feat(WASM)
+{
+	iptr ret = $$wasm_memory_grow($memory_index, pages);
+	return (ret == -1) ? mem::OUT_OF_MEMORY : ret;
+}
+
 macro @_all_const_in(...) <NeedleType> @const @local
 {
 	$for int $i = 0; $i < $vaarg.len; $i++:
-$if $defined(NeedleType a = $vaarg[$i]) &&& !$defined(NeedleType $a = $vaarg[$i]):
-return false;
-$endif
-$endfor
-return true;
-}
+		$if $defined(NeedleType a = $vaarg[$i]) &&& !$defined(NeedleType $a = $vaarg[$i]):
+			return false;
+		$endif
+	$endfor
 
+	return true;
+}

@@ -154,6 +154,10 @@
 - `std::encoding::csv` can remove quotes from quoted fields.
 - Make `scalbn` generic.
 - Add `nolibc::scalbnf` implementation.
+- Added new allocator `WasmArena` implementing the `Allocator` interface
+- Deprecated `WasmMemory` in favor of the `WasmArena` allocator
+- Added `@wasm_memory_grow` and `@wasm_memory_size` intrinsics in `std::core::builtin`
+- Added wasm memory constants (`WASM_HEAP_BASE` and `WASM_BLOCK_SIZE`) to `std::core::mem`
 
 ## 0.8.6 Change list
 - `File.write` declared its buffer `[out]` instead of `[in]`, and `UrlQueryValues.add` declared `self` `[in]` although it modifies it.

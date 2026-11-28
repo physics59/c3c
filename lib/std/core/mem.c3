@@ -48,8 +48,8 @@ fn sz os_pagesize()
 		$case env::WIN32:
 			static sz pagesize;
 			if (pagesize) return pagesize;
-		    Win32_SYSTEM_INFO info;
-            win32::getSystemInfo(&info);
+			Win32_SYSTEM_INFO info;
+			win32::getSystemInfo(&info);
 			return pagesize = info.dwPageSize;
 		$default:
 			return 4096;
@@ -1373,6 +1373,12 @@ fn void* __memcpy(void* dst, void* src, sz n) @weak @export("memcpy")
 	}
 	return dst;
 }
+
+
+module std::core::mem @feat(WASM);
+
+const sz WASM_BLOCK_SIZE = 65536;
+extern const void* WASM_HEAP_BASE @cname("__heap_base");
 
 
 <*
